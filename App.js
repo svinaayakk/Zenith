@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar'
 import { useState } from 'react'
 import { SafeAreaView, ScrollView, Text, StyleSheet } from 'react-native'
+import WelcomePage from './src/components/WelcomePage'
 import GoalList from './src/components/GoalList'
 import HabitList from './src/components/HabitList'
 
@@ -16,6 +17,7 @@ const INITIAL_HABITS = [
 ]
 
 export default function App() {
+  const [userName, setUserName] = useState(null)
   const [goals, setGoals] = useState(INITIAL_GOALS)
   const [habits, setHabits] = useState(INITIAL_HABITS)
 
@@ -46,19 +48,27 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.heading}>Zenith</Text>
-        <GoalList goals={goals} onAdd={addGoal} onToggle={toggleGoal} />
-        <HabitList habits={habits} onAdd={addHabit} onToggle={toggleHabit} />
-      </ScrollView>
-      <StatusBar style="auto" />
-    </SafeAreaView>
+    <>
+      {!userName ? (
+        <WelcomePage onContinue={setUserName} />
+      ) : (
+        <SafeAreaView style={styles.container}>
+          <ScrollView contentContainerStyle={styles.scroll}>
+            <Text style={styles.heading}>Zenith</Text>
+            <Text style={styles.welcome}>Welcome, {userName}!</Text>
+            <GoalList goals={goals} onAdd={addGoal} onToggle={toggleGoal} />
+            <HabitList habits={habits} onAdd={addHabit} onToggle={toggleHabit} />
+          </ScrollView>
+          <StatusBar style="auto" />
+        </SafeAreaView>
+      )}
+    </>
   )
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   scroll: { padding: 20, paddingTop: 50 },
-  heading: { fontSize: 32, fontWeight: 'bold', marginBottom: 20 },
+  heading: { fontSize: 32, fontWeight: 'bold', marginBottom: 8 },
+  welcome: { fontSize: 16, color: '#666', marginBottom: 20 },
 })
