@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import WelcomePage from './components/WelcomePage'
 import GoalList from './components/GoalList'
 import HabitList from './components/HabitList'
 
@@ -15,6 +16,7 @@ const INITIAL_HABITS = [
 ]
 
 function App() {
+  const [userName, setUserName] = useState(null)
   const [goals, setGoals] = useState(INITIAL_GOALS)
   const [habits, setHabits] = useState(INITIAL_HABITS)
 
@@ -48,9 +50,16 @@ function App() {
 
   return (
     <>
-      <h1>Zenith</h1>
-      <GoalList goals={goals} onAdd={addGoal} onToggle={toggleGoal} />
-      <HabitList habits={habits} onAdd={addHabit} onToggle={toggleHabit} />
+      {!userName ? (
+        <WelcomePage onContinue={setUserName} />
+      ) : (
+        <>
+          <h1>Zenith</h1>
+          <p>Welcome, {userName}!</p>
+          <GoalList goals={goals} onAdd={addGoal} onToggle={toggleGoal} />
+          <HabitList habits={habits} onAdd={addHabit} onToggle={toggleHabit} />
+        </>
+      )}
     </>
   )
 }
