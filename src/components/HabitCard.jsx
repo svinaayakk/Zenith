@@ -33,9 +33,10 @@ function HabitRow({ habit, onToggle }) {
     <Pressable onPress={handlePress}>
       <Animated.View style={[s.row, { opacity, transform: [{ scale }] }]}>
         <View style={[s.check, habit.completed && s.checked]}>
-          <Animated.Text style={[s.tick, { transform: [{ scale: checkScale }] }]}>
-            ✓
-          </Animated.Text>
+          <Animated.View style={[s.tickMark, { transform: [{ scale: checkScale }] }]}>
+            <View style={s.tickShort} />
+            <View style={s.tickLong} />
+          </Animated.View>
         </View>
         <View style={s.info}>
           <Text style={[s.itemTxt, habit.completed && s.struck]}>{habit.title}</Text>
@@ -176,7 +177,9 @@ const s = StyleSheet.create({
     marginRight: 12,
   },
   checked: { backgroundColor: TXT, borderColor: TXT },
-  tick: { color: '#fff', fontSize: 13, fontWeight: 'bold' },
+  tickMark: { flexDirection: 'row', alignItems: 'flex-end', width: 12, height: 10 },
+  tickShort: { width: 2, height: 5, backgroundColor: '#fff', borderRadius: 1, transform: [{ rotate: '-40deg' }] },
+  tickLong: { width: 2, height: 10, backgroundColor: '#fff', borderRadius: 1, transform: [{ rotate: '25deg' }], marginLeft: 1 },
   info: { flex: 1 },
   itemTxt: { fontSize: 15, color: TXT },
   struck: { textDecorationLine: 'line-through', color: TXT2 },

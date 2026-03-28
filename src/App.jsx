@@ -3,9 +3,10 @@ import { Animated, PanResponder, Dimensions, StyleSheet } from 'react-native'
 import WelcomePage from './components/WelcomePage'
 import HomePage from './components/HomePage'
 import AnalyticsPage from './components/AnalyticsPage'
+import RemindersPage from './components/RemindersPage'
 
 const { width: SCREEN_W } = Dimensions.get('window')
-const TABS = ['focus', 'analytics']
+const TABS = ['focus', 'analytics', 'reminders']
 const SWIPE_THRESHOLD = SCREEN_W * 0.25
 const VELOCITY_THRESHOLD = 0.4
 
@@ -13,6 +14,7 @@ function App() {
   const [userName, setUserName] = useState(null)
   const [goals, setGoals] = useState([])
   const [habits, setHabits] = useState([])
+  const [reminders, setReminders] = useState([])
   const [activeTab, setActiveTab] = useState('focus')
   const translateX = useRef(new Animated.Value(0)).current
   const tabIndex = useRef(0)
@@ -113,6 +115,19 @@ function App() {
     )
   }
 
+  const addReminder = (r) => setReminders((prev) => [...prev, r])
+  const deleteReminder = (id) =>
+    setReminders((prev) => prev.filter((r) => r.id !== id))
+
+  /* bell count: reminders within 7 days or past due */
+  const bellCount = reminders.filter((r) => {
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+    const target = new Date(r.date + 'T00:00:00')
+    const diff = Math.ceil((target - now) / (1000 * 60 * 60 * 24))
+    return diff <= 7
+  }).length
+
   return (
     <>
       {!userName ? (
@@ -139,6 +154,7 @@ function App() {
             onBack={() => setUserName(null)}
             activeTab={activeTab}
             onTabChange={handleTabChange}
+            bellCount={bellCount}
           />
           <AnalyticsPage
             userName={userName}
@@ -146,6 +162,16 @@ function App() {
             habits={habits}
             activeTab={activeTab}
             onTabChange={handleTabChange}
+            bellCount={bellCount}
+          />
+          <RemindersPage
+            userName={userName}
+            reminders={reminders}
+            onAddReminder={addReminder}
+            onDeleteReminder={deleteReminder}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            bellCount={bellCount}
           />
         </Animated.View>
       )}

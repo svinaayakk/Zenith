@@ -9,13 +9,48 @@ const ACTIVE_TXT = '#fff'
 const INACTIVE_TXT = TXT2
 const ACCENT = '#c8e64a'
 
+/* ── minimal View-based tab indicators ── */
+function FocusDot({ active }) {
+  const c = active ? ACTIVE_TXT : INACTIVE_TXT
+  return (
+    <View style={{ width: 16, height: 16, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ width: 12, height: 12, borderRadius: 6, borderWidth: 2, borderColor: c, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: c }} />
+      </View>
+    </View>
+  )
+}
+function AnalyticsBars({ active }) {
+  const c = active ? ACTIVE_TXT : INACTIVE_TXT
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 2, height: 14 }}>
+      <View style={{ width: 3, height: 6, borderRadius: 1.5, backgroundColor: c }} />
+      <View style={{ width: 3, height: 10, borderRadius: 1.5, backgroundColor: c }} />
+      <View style={{ width: 3, height: 14, borderRadius: 1.5, backgroundColor: c }} />
+    </View>
+  )
+}
+function BellShape({ active }) {
+  const c = active ? ACTIVE_TXT : INACTIVE_TXT
+  return (
+    <View style={{ width: 16, height: 16, alignItems: 'center' }}>
+      <View style={{ width: 10, height: 10, borderTopLeftRadius: 5, borderTopRightRadius: 5, backgroundColor: c }} />
+      <View style={{ width: 14, height: 3, borderRadius: 1.5, backgroundColor: c, marginTop: -1 }} />
+      <View style={{ width: 4, height: 2, borderRadius: 1, backgroundColor: c, marginTop: 1 }} />
+    </View>
+  )
+}
+
+const TAB_ICONS = { focus: FocusDot, analytics: AnalyticsBars, reminders: BellShape }
+
 const TABS = [
-  { key: 'focus', label: 'Focus', icon: '◎' },
-  { key: 'analytics', label: 'Analytics', icon: '▦' },
+  { key: 'focus', label: 'Focus' },
+  { key: 'analytics', label: 'Analytics' },
+  { key: 'reminders', label: 'Reminders' },
 ]
 
 export default function BottomTabBar({ activeTab, onTabChange, badge }) {
-  const slideAnim = useRef(new Animated.Value(activeTab === 'focus' ? 0 : 1)).current
+  const slideAnim = useRef(new Animated.Value(TABS.findIndex((t) => t.key === activeTab) || 0)).current
   const entranceFade = useRef(new Animated.Value(0)).current
   const entranceSlide = useRef(new Animated.Value(30)).current
 
@@ -63,11 +98,11 @@ export default function BottomTabBar({ activeTab, onTabChange, badge }) {
               style={s.tab}
               onPress={() => onTabChange(tab.key)}
             >
-              <Text style={[s.icon, active && s.iconActive]}>{tab.icon}</Text>
+              {(() => { const Icon = TAB_ICONS[tab.key]; return Icon ? <Icon active={active} /> : null })()}
               <Text style={[s.label, active && s.labelActive]}>
                 {tab.label}
               </Text>
-              {active && badge != null && badge > 0 && (
+              {tab.key === 'reminders' && badge != null && badge > 0 && (
                 <View style={s.badge}>
                   <Text style={s.badgeText}>{badge}</Text>
                 </View>
@@ -113,20 +148,13 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     borderRadius: 24,
-    gap: 6,
+    gap: 4,
     zIndex: 1,
   },
-  icon: {
-    fontSize: 14,
-    color: INACTIVE_TXT,
-  },
-  iconActive: {
-    color: ACTIVE_TXT,
-  },
   label: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '600',
     color: INACTIVE_TXT,
   },

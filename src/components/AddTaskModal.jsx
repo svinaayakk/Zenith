@@ -81,35 +81,51 @@ export default function AddTaskModal({ visible, onClose, onAddGoal, onAddHabit }
                   style={s.typeCard}
                   onPress={() => handlePickType('sprint')}
                 >
-                  <Text style={s.typeIcon}>⚡</Text>
+                  <View style={s.typeIconWrap}>
+                    <View style={s.sprintBolt1} />
+                    <View style={s.sprintBolt2} />
+                  </View>
                   <View style={s.typeInfo}>
                     <Text style={s.typeTitle}>Sprint</Text>
                     <Text style={s.typeDesc}>
                       One-time goal with a deadline
                     </Text>
                   </View>
-                  <Text style={s.arrow}>›</Text>
+                  <View style={s.arrowIndicator}>
+                    <View style={s.arrowIndicatorLine} />
+                    <View style={s.arrowIndicatorHead} />
+                  </View>
                 </Pressable>
 
                 <Pressable
                   style={s.typeCard}
                   onPress={() => handlePickType('consistency')}
                 >
-                  <Text style={s.typeIcon}>🔁</Text>
+                  <View style={s.typeIconWrap}>
+                    <View style={s.loopRing} />
+                    <View style={s.loopDot} />
+                  </View>
                   <View style={s.typeInfo}>
                     <Text style={s.typeTitle}>Consistency</Text>
                     <Text style={s.typeDesc}>
                       Recurring habit to build over time
                     </Text>
                   </View>
-                  <Text style={s.arrow}>›</Text>
+                  <View style={s.arrowIndicator}>
+                    <View style={s.arrowIndicatorLine} />
+                    <View style={s.arrowIndicatorHead} />
+                  </View>
                 </Pressable>
               </View>
             ) : (
               /* ── Step 2: details ── */
               <View style={s.content}>
-                <Pressable onPress={() => setStep('type')}>
-                  <Text style={s.backTxt}>← Back</Text>
+                <Pressable style={s.backRow} onPress={() => setStep('type')}>
+                  <View style={s.backArrow}>
+                    <View style={s.backArrowLine} />
+                    <View style={s.backArrowHead} />
+                  </View>
+                  <Text style={s.backTxt}>Back</Text>
                 </Pressable>
 
                 <Text style={s.heading}>
@@ -229,9 +245,18 @@ const s = StyleSheet.create({
     borderColor: WHITE20,
     gap: 14,
   },
-  typeIcon: {
-    fontSize: 28,
+  typeIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: WHITE20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  sprintBolt1: { width: 10, height: 3, backgroundColor: TXT, borderRadius: 1.5, transform: [{ rotate: '-30deg' }], marginBottom: 1 },
+  sprintBolt2: { width: 10, height: 3, backgroundColor: TXT, borderRadius: 1.5, transform: [{ rotate: '30deg' }], marginTop: -1 },
+  loopRing: { width: 16, height: 16, borderRadius: 8, borderWidth: 2.5, borderColor: TXT },
+  loopDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: TXT, position: 'absolute', top: 6, right: 6 },
   typeInfo: {
     flex: 1,
   },
@@ -245,12 +270,15 @@ const s = StyleSheet.create({
     color: TXT2,
     marginTop: 2,
   },
-  arrow: {
-    fontSize: 24,
-    color: TXT2,
-  },
+  arrowIndicator: { width: 20, height: 20, alignItems: 'center', justifyContent: 'center' },
+  arrowIndicatorLine: { position: 'absolute', width: 12, height: 2, borderRadius: 1, backgroundColor: TXT2 },
+  arrowIndicatorHead: { position: 'absolute', right: 2, width: 8, height: 8, borderTopWidth: 2, borderRightWidth: 2, borderColor: TXT2, transform: [{ rotate: '45deg' }] },
 
   /* details form */
+  backRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  backArrow: { width: 16, height: 16, alignItems: 'center', justifyContent: 'center' },
+  backArrowLine: { position: 'absolute', width: 10, height: 2, borderRadius: 1, backgroundColor: TXT2 },
+  backArrowHead: { position: 'absolute', left: 0, width: 7, height: 7, borderBottomWidth: 2, borderLeftWidth: 2, borderColor: TXT2, transform: [{ rotate: '45deg' }] },
   backTxt: {
     fontSize: 15,
     color: TXT2,

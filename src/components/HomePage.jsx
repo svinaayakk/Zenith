@@ -29,7 +29,8 @@ const WHITE20 = 'rgba(255,255,255,0.22)'
 function ArrowBadge() {
   return (
     <View style={s.arrowBadge}>
-      <Text style={s.arrowChar}>↗</Text>
+      <View style={s.arrowLine} />
+      <View style={s.arrowHead} />
     </View>
   )
 }
@@ -121,6 +122,7 @@ export default function HomePage({
   onBack,
   activeTab,
   onTabChange,
+  bellCount,
 }) {
   const doneGoals = goals.filter((g) => g.completed).length
   const doneHabits = habits.filter((h) => h.completed).length
@@ -160,17 +162,26 @@ export default function HomePage({
     <View style={s.root}>
       {/* ---- top bar ---- */}
       <View style={s.topBar}>
-        <ZenithLogo size={38} color="#fff" />
-        <View style={s.topRight}>
+        <View style={s.topLeft}>
+          <ZenithLogo size={38} color="#fff" />
           <View style={s.avatar}>
             <Text style={s.avatarLetter}>
               {userName.charAt(0).toUpperCase()}
             </Text>
           </View>
-          <Pressable style={s.menuCircle}>
-            <Text style={s.menuIcon}>≡</Text>
-          </Pressable>
         </View>
+        <Pressable style={s.bellCircle} onPress={() => onTabChange('reminders')}>
+          <View style={s.bellShape}>
+            <View style={s.bellDome} />
+            <View style={s.bellBase} />
+            <View style={s.bellClapper} />
+          </View>
+          {bellCount > 0 && (
+            <View style={s.bellBadge}>
+              <Text style={s.bellBadgeText}>{bellCount}</Text>
+            </View>
+          )}
+        </Pressable>
       </View>
 
       <CalendarStrip />
@@ -227,13 +238,16 @@ export default function HomePage({
       <BottomTabBar
         activeTab={activeTab}
         onTabChange={onTabChange}
-        badge={goals.length + habits.length - done}
+        badge={bellCount}
       />
 
       {/* FAB */}
       <Pressable onPress={handleFabPress}>
         <Animated.View style={[s.fab, { transform: [{ scale: Animated.multiply(fabScale, fabPressScale) }] }]}>
-          <Text style={s.fabIcon}>+</Text>
+          <View style={s.fabCross}>
+            <View style={s.fabH} />
+            <View style={s.fabV} />
+          </View>
         </Animated.View>
       </Pressable>
 
@@ -261,7 +275,7 @@ const s = StyleSheet.create({
     paddingTop: 58,
     paddingBottom: 14,
   },
-  topRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  topLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   avatar: {
     width: 40,
     height: 40,
@@ -271,7 +285,7 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   avatarLetter: { fontSize: 18, fontWeight: '700', color: TXT },
-  menuCircle: {
+  bellCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -279,7 +293,23 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  menuIcon: { fontSize: 20, color: '#fff' },
+  bellShape: { width: 18, height: 18, alignItems: 'center' },
+  bellDome: { width: 12, height: 11, borderTopLeftRadius: 6, borderTopRightRadius: 6, backgroundColor: TXT },
+  bellBase: { width: 16, height: 3, borderRadius: 1.5, backgroundColor: TXT, marginTop: -1 },
+  bellClapper: { width: 4, height: 2.5, borderRadius: 1.25, backgroundColor: TXT, marginTop: 1 },
+  bellBadge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#e05a5a',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+  bellBadgeText: { fontSize: 10, fontWeight: '700', color: '#fff' },
 
   /* ---- calendar strip ---- */
   calStrip: {
@@ -348,7 +378,8 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  arrowChar: { fontSize: 16, color: TXT2 },
+  arrowLine: { width: 2, height: 12, backgroundColor: TXT2, borderRadius: 1, transform: [{ rotate: '-45deg' }], position: 'absolute' },
+  arrowHead: { width: 6, height: 6, borderTopWidth: 2, borderRightWidth: 2, borderColor: TXT2, transform: [{ rotate: '-45deg' }], position: 'absolute', top: 4, right: 8 },
 
   /* hero number */
   heroNum: { fontSize: 52, fontWeight: '700', color: TXT, marginBottom: 8 },
@@ -440,9 +471,7 @@ const s = StyleSheet.create({
     elevation: 6,
     zIndex: 10,
   },
-  fabIcon: {
-    fontSize: 28,
-    color: '#fff',
-    lineHeight: 30,
-  },
+  fabCross: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
+  fabH: { position: 'absolute', width: 20, height: 2.5, borderRadius: 1.25, backgroundColor: '#fff' },
+  fabV: { position: 'absolute', width: 2.5, height: 20, borderRadius: 1.25, backgroundColor: '#fff' },
 })
