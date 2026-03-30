@@ -25,8 +25,8 @@ function heatColor(level) {
 }
 
 /* ── calendar heat-map for the current month ── */
-function MonthHeatMap({ goals, habits }) {
-  const { year, monthName, grid, today } = useMemo(() => {
+function MonthHeatMap({ completionLog }) {
+  const { year, monthName, grid, today, levels } = useMemo(() => {
     const now = new Date()
     const y = now.getFullYear()
     const m = now.getMonth()
@@ -51,52 +51,25 @@ function MonthHeatMap({ goals, habits }) {
     for (let i = 0; i < cells.length; i += 7)
       rows.push(cells.slice(i, i + 7))
 
-    /* simulated activity level per day (0-4) */
-    const total = goals.length + habits.length
-    const doneCount =
-      goals.filter((g) => g.completed).length +
-      habits.filter((h) => h.completed).length
-
-    const levels = {}
-    for (let d = 1; d <= daysInMonth; d++) {
-      if (d > todayDate) {
-        levels[d] = 0
-      } else if (d === todayDate) {
-        levels[d] = total ? Math.min(4, Math.round((doneCount / total) * 4)) : 0
-      } else {
-        /* past days get pseudo-random but deterministic levels */
-        const seed = (d * 7 + m * 13 + y) % 5
-        levels[d] = seed
-      }
-    }
-
-    return { year: y, monthName: name, grid: rows, today: todayDate, levels }
-  }, [goals, habits])
-
-  /* compute levels outside of useMemo (it's returned inside) — pull from closure */
-  const { levels } = useMemo(() => {
-    const now = new Date()
-    const y = now.getFullYear()
-    const m = now.getMonth()
-    const todayDate = now.getDate()
-    const daysInMonth = new Date(y, m + 1, 0).getDate()
-    const total = goals.length + habits.length
-    const doneCount =
-      goals.filter((g) => g.completed).length +
-      habits.filter((h) => h.completed).length
-
+    /* activity levels from real completion log */
     const lvl = {}
+    const pad = (n) => String(n).padStart(2, '0')
     for (let d = 1; d <= daysInMonth; d++) {
       if (d > todayDate) {
         lvl[d] = 0
-      } else if (d === todayDate) {
-        lvl[d] = total ? Math.min(4, Math.round((doneCount / total) * 4)) : 0
       } else {
-        lvl[d] = (d * 7 + m * 13 + y) % 5
+        const key = `${y}-${pad(m + 1)}-${pad(d)}`
+        const entry = completionLog[key]
+        if (!entry || entry.total === 0) {
+          lvl[d] = 0
+        } else {
+          lvl[d] = Math.min(4, Math.round((entry.done / entry.total) * 4))
+        }
       }
     }
-    return { levels: lvl }
-  }, [goals, habits])
+
+    return { year: y, monthName: name, grid: rows, today: todayDate, levels: lvl }
+  }, [completionLog])
 
   return (
     <View>
@@ -159,32 +132,29 @@ function MonthHeatMap({ goals, habits }) {
 }
 
 /* ── Consistency Score ring ── */
-function ConsistencyScore({ goals, habits }) {
+function ConsistencyScore({ completionLog }) {
   const score = useMemo(() => {
     const now = new Date()
     const y = now.getFullYear()
     const m = now.getMonth()
     const todayDate = now.getDate()
-    const total = goals.length + habits.length
+    const pad = (n) => String(n).padStart(2, '0')
 
-    /* today's completion rate (0-1) */
-    const doneCount =
-      goals.filter((g) => g.completed).length +
-      habits.filter((h) => h.completed).length
-    const todayRate = total ? doneCount / total : 0
+    let totalRate = 0
+    let loggedDays = 0
 
-    /* past-day active ratio: count days with level >= 1 */
-    let activeDays = 0
-    for (let d = 1; d < todayDate; d++) {
-      const lvl = (d * 7 + m * 13 + y) % 5
-      if (lvl >= 1) activeDays++
+    for (let d = 1; d <= todayDate; d++) {
+      const key = `${y}-${pad(m + 1)}-${pad(d)}`
+      const entry = completionLog[key]
+      if (entry && entry.total > 0) {
+        totalRate += entry.done / entry.total
+        loggedDays++
+      }
     }
-    const pastRate = todayDate > 1 ? activeDays / (todayDate - 1) : 0
 
-    /* weighted blend: 40 % today completion, 60 % past activity */
-    const raw = todayDate === 1 ? todayRate : todayRate * 0.4 + pastRate * 0.6
-    return Math.round(raw * 100)
-  }, [goals, habits])
+    if (loggedDays === 0) return 0
+    return Math.round((totalRate / loggedDays) * 100)
+  }, [completionLog])
 
   const label =
     score >= 80
@@ -254,6 +224,7 @@ export default function AnalyticsPage({
   userName,
   goals,
   habits,
+  completionLog,
   onTabChange,
   activeTab,
   bellCount,
@@ -300,12 +271,12 @@ export default function AnalyticsPage({
           <View style={s.cardHead}>
             <Text style={s.cardLabel}>Activity Heat Map</Text>
           </View>
-          <MonthHeatMap goals={goals} habits={habits} />
+          <MonthHeatMap completionLog={completionLog} />
         </View>
 
         {/* ── Consistency Score card ── */}
         <View style={s.card}>
-          <ConsistencyScore goals={goals} habits={habits} />
+          <ConsistencyScore completionLog={completionLog} />
         </View>
 
         {/* ── Summary card ── */}
