@@ -1,10 +1,10 @@
 import { useState } from 'react'
+import CalendarPopup from './CalendarPopup'
 import {
   View,
   Text,
   TextInput,
   Pressable,
-  Modal,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -24,6 +24,7 @@ export default function AddTaskModal({ visible, onClose, onAddGoal, onAddHabit }
   const [taskType, setTaskType] = useState(null) // 'sprint' | 'consistency'
   const [title, setTitle] = useState('')
   const [deadline, setDeadline] = useState('')
+  const [showCalendar, setShowCalendar] = useState(false)
   const [frequency, setFrequency] = useState('daily')
 
   const reset = () => {
@@ -54,162 +55,188 @@ export default function AddTaskModal({ visible, onClose, onAddGoal, onAddHabit }
     handleClose()
   }
 
+  if (!visible) return null
+
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={handleClose}
-    >
-      <Pressable style={s.overlay} onPress={handleClose}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={s.kvWrap}
-        >
-          <Pressable style={s.sheet} onPress={(e) => e.stopPropagation()}>
-            {/* drag handle */}
-            <View style={s.handleRow}>
-              <View style={s.handle} />
-            </View>
+    <View style={s.overlay}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={s.kvWrap}
+      >
+        <Pressable style={s.backdrop} onPress={handleClose} />
+        <Pressable style={s.sheet} onPress={(e) => e.stopPropagation()}>
+          {/* drag handle */}
+          <View style={s.handleRow}>
+            <View style={s.handle} />
+          </View>
 
-            {step === 'type' ? (
-              /* ── Step 1: pick type ── */
-              <View style={s.content}>
-                <Text style={s.heading}>What kind of task?</Text>
+          {step === 'type' ? (
+            /* ── Step 1: pick type ── */
+            <View style={s.content}>
+              <Text style={s.heading}>What kind of task?</Text>
 
-                <Pressable
-                  style={s.typeCard}
-                  onPress={() => handlePickType('sprint')}
-                >
-                  <View style={s.typeIconWrap}>
-                    <View style={s.sprintBolt1} />
-                    <View style={s.sprintBolt2} />
-                  </View>
-                  <View style={s.typeInfo}>
-                    <Text style={s.typeTitle}>Sprint</Text>
-                    <Text style={s.typeDesc}>
-                      One-time goal with a deadline
-                    </Text>
-                  </View>
-                  <View style={s.arrowIndicator}>
-                    <View style={s.arrowIndicatorLine} />
-                    <View style={s.arrowIndicatorHead} />
-                  </View>
-                </Pressable>
-
-                <Pressable
-                  style={s.typeCard}
-                  onPress={() => handlePickType('consistency')}
-                >
-                  <View style={s.typeIconWrap}>
-                    <View style={s.loopRing} />
-                    <View style={s.loopDot} />
-                  </View>
-                  <View style={s.typeInfo}>
-                    <Text style={s.typeTitle}>Consistency</Text>
-                    <Text style={s.typeDesc}>
-                      Recurring habit to build over time
-                    </Text>
-                  </View>
-                  <View style={s.arrowIndicator}>
-                    <View style={s.arrowIndicatorLine} />
-                    <View style={s.arrowIndicatorHead} />
-                  </View>
-                </Pressable>
-              </View>
-            ) : (
-              /* ── Step 2: details ── */
-              <View style={s.content}>
-                <Pressable style={s.backRow} onPress={() => setStep('type')}>
-                  <View style={s.backArrow}>
-                    <View style={s.backArrowLine} />
-                    <View style={s.backArrowHead} />
-                  </View>
-                  <Text style={s.backTxt}>Back</Text>
-                </Pressable>
-
-                <Text style={s.heading}>
-                  {taskType === 'sprint'
-                    ? 'New Sprint Goal'
-                    : 'New Consistency Habit'}
-                </Text>
-
-                <TextInput
-                  style={s.input}
-                  placeholder="Name your task…"
-                  placeholderTextColor={TXT2}
-                  value={title}
-                  onChangeText={setTitle}
-                  autoFocus
-                />
-
-                {taskType === 'sprint' ? (
-                  <TextInput
-                    style={s.input}
-                    placeholder="Deadline (YYYY-MM-DD)"
-                    placeholderTextColor={TXT2}
-                    value={deadline}
-                    onChangeText={setDeadline}
-                  />
-                ) : (
-                  <View>
-                    <Text style={s.fieldLabel}>How often?</Text>
-                    <View style={s.freqRow}>
-                      {FREQUENCIES.map((f) => (
-                        <Pressable
-                          key={f}
-                          style={[
-                            s.freqChip,
-                            frequency === f && s.freqChipActive,
-                          ]}
-                          onPress={() => setFrequency(f)}
-                        >
-                          <Text
-                            style={[
-                              s.freqChipTxt,
-                              frequency === f && s.freqChipTxtActive,
-                            ]}
-                          >
-                            {f}
-                          </Text>
-                        </Pressable>
-                      ))}
-                    </View>
-                  </View>
-                )}
-
-                <Pressable
-                  style={[s.submitBtn, !title.trim() && s.submitBtnDisabled]}
-                  onPress={handleSubmit}
-                  disabled={!title.trim()}
-                >
-                  <Text style={s.submitBtnTxt}>
-                    {taskType === 'sprint' ? 'Add Sprint' : 'Add Habit'}
+              <Pressable
+                style={s.typeCard}
+                onPress={() => handlePickType('sprint')}
+              >
+                <View style={s.typeIconWrap}>
+                  <View style={s.sprintBolt1} />
+                  <View style={s.sprintBolt2} />
+                </View>
+                <View style={s.typeInfo}>
+                  <Text style={s.typeTitle}>Sprint</Text>
+                  <Text style={s.typeDesc}>
+                    One-time goal with a deadline
                   </Text>
-                </Pressable>
-              </View>
-            )}
-          </Pressable>
-        </KeyboardAvoidingView>
-      </Pressable>
-    </Modal>
+                </View>
+                <View style={s.arrowIndicator}>
+                  <View style={s.arrowIndicatorLine} />
+                  <View style={s.arrowIndicatorHead} />
+                </View>
+              </Pressable>
+
+              <Pressable
+                style={s.typeCard}
+                onPress={() => handlePickType('consistency')}
+              >
+                <View style={s.typeIconWrap}>
+                  <View style={s.loopRing} />
+                  <View style={s.loopDot} />
+                </View>
+                <View style={s.typeInfo}>
+                  <Text style={s.typeTitle}>Consistency</Text>
+                  <Text style={s.typeDesc}>
+                    Recurring habit to build over time
+                  </Text>
+                </View>
+                <View style={s.arrowIndicator}>
+                  <View style={s.arrowIndicatorLine} />
+                  <View style={s.arrowIndicatorHead} />
+                </View>
+              </Pressable>
+            </View>
+          ) : (
+            /* ── Step 2: details ── */
+            <View style={s.content}>
+              <Pressable style={s.backRow} onPress={() => setStep('type')}>
+                <View style={s.backArrow}>
+                  <View style={s.backArrowLine} />
+                  <View style={s.backArrowHead} />
+                </View>
+                <Text style={s.backTxt}>Back</Text>
+              </Pressable>
+
+              <Text style={s.heading}>
+                {taskType === 'sprint'
+                  ? 'New Sprint Goal'
+                  : 'New Consistency Habit'}
+              </Text>
+
+              <TextInput
+                style={s.input}
+                placeholder="Name your task…"
+                placeholderTextColor={TXT2}
+                value={title}
+                onChangeText={setTitle}
+                autoFocus
+              />
+
+              {taskType === 'sprint' ? (
+                <>
+                  <Pressable
+                    style={[s.input, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}
+                    onPress={() => setShowCalendar(true)}
+                  >
+                    <Text style={{ color: deadline ? TXT : TXT2 }}>
+                      {deadline ? deadline : 'Pick a due date'}
+                    </Text>
+                    <Text style={{ color: TXT2, fontSize: 18, marginLeft: 8 }}>📅</Text>
+                  </Pressable>
+                  <CalendarPopup
+                    visible={showCalendar}
+                    onSelect={(date) => { setDeadline(date); setShowCalendar(false) }}
+                    onClose={() => setShowCalendar(false)}
+                    initialDate={deadline}
+                  />
+                </>
+              ) : (
+                <View>
+                  <Text style={s.fieldLabel}>How often?</Text>
+                  <View style={s.freqRow}>
+                    {FREQUENCIES.map((f) => (
+                      <Pressable
+                        key={f}
+                        style={[
+                          s.freqChip,
+                          frequency === f && s.freqChipActive,
+                        ]}
+                        onPress={() => setFrequency(f)}
+                      >
+                        <Text
+                          style={[
+                            s.freqChipTxt,
+                            frequency === f && s.freqChipTxtActive,
+                          ]}
+                        >
+                          {f}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                </View>
+              )}
+
+              <Pressable
+                style={[s.submitBtn, !title.trim() && s.submitBtnDisabled]}
+                onPress={handleSubmit}
+                disabled={!title.trim()}
+              >
+                <Text style={s.submitBtnTxt}>
+                  {taskType === 'sprint' ? 'Add Sprint' : 'Add Habit'}
+                </Text>
+              </Pressable>
+            </View>
+          )}
+        </Pressable>
+      </KeyboardAvoidingView>
+    </View>
   )
 }
 
 const s = StyleSheet.create({
   overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.35)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 100,
     justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.35)',
   },
   kvWrap: {
+    width: '100%',
     justifyContent: 'flex-end',
+    alignItems: 'center',
+    flex: 1,
   },
   sheet: {
     backgroundColor: BG,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     paddingBottom: 40,
+    width: 390,
+    maxWidth: '100%',
+    marginBottom: 0,
+    zIndex: 101,
   },
   handleRow: {
     alignItems: 'center',

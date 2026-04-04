@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { View, Text, ScrollView, Pressable, Dimensions, StyleSheet } from 'react-native'
-import ZenithLogo from './ZenithLogo'
 import BottomTabBar from './BottomTabBar'
+import AnimatedAvatar from './AnimatedAvatar'
 
-const { width: SCREEN_W } = Dimensions.get('window')
+const SCREEN_W = 390
 
 const BG = '#a8ab8e'
 const CARD_BG = 'rgba(190,194,172,0.52)'
@@ -239,13 +239,9 @@ export default function AnalyticsPage({
     <View style={s.root}>
       {/* ---- top bar ---- */}
       <View style={s.topBar}>
-        <View style={s.topLeft}>
-          <ZenithLogo size={38} color="#fff" />
-          <View style={s.avatar}>
-            <Text style={s.avatarLetter}>
-              {userName.charAt(0).toUpperCase()}
-            </Text>
-          </View>
+        <AnimatedAvatar letter={userName.charAt(0).toUpperCase()} />
+        <View style={s.brandCenter}>
+          <Text style={s.brandTitle}>Zenith</Text>
         </View>
         <Pressable style={s.bellCircle} onPress={() => onTabChange('reminders')}>
           <View style={s.bellShape}>
@@ -308,7 +304,7 @@ export default function AnalyticsPage({
 /* ================================================================ */
 
 const s = StyleSheet.create({
-  root: { width: SCREEN_W, flex: 1, backgroundColor: BG },
+  root: { flex: 1, backgroundColor: BG },
 
   topBar: {
     flexDirection: 'row',
@@ -318,7 +314,23 @@ const s = StyleSheet.create({
     paddingTop: 58,
     paddingBottom: 14,
   },
-  topLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  brandCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 58,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    pointerEvents: 'none',
+  },
+  brandTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: TXT,
+    fontFamily: 'Georgia, serif',
+    letterSpacing: 2,
+  },
   avatar: {
     width: 40,
     height: 40,

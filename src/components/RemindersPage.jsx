@@ -5,15 +5,14 @@ import {
   ScrollView,
   Pressable,
   TextInput,
-  Modal,
   Dimensions,
   StyleSheet,
-  Platform,
 } from 'react-native'
-import ZenithLogo from './ZenithLogo'
 import BottomTabBar from './BottomTabBar'
+import AnimatedAvatar from './AnimatedAvatar'
+import CalendarPopup from './CalendarPopup'
 
-const { width: SCREEN_W } = Dimensions.get('window')
+const SCREEN_W = 390
 
 const BG = '#a8ab8e'
 const CARD_BG = 'rgba(190,194,172,0.52)'
@@ -44,6 +43,7 @@ function urgencyLabel(days) {
 function AddReminderModal({ visible, onClose, onAdd }) {
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
+  const [showCalendar, setShowCalendar] = useState(false)
 
   const handleAdd = () => {
     if (!title.trim() || !date.trim()) return
@@ -55,43 +55,51 @@ function AddReminderModal({ visible, onClose, onAdd }) {
     onClose()
   }
 
+  if (!visible) return null
+
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <Pressable style={s.modalBg} onPress={onClose}>
-        <Pressable style={s.modalCard} onPress={(e) => e.stopPropagation()}>
-          <Text style={s.modalTitle}>New Reminder</Text>
+    <View style={s.modalBg}>
+      <Pressable style={s.modalBackdrop} onPress={onClose} />
+      <View style={s.modalCard}>
+        <View style={s.modalHandle}><View style={s.modalHandleBar} /></View>
+        <Text style={s.modalTitle}>New Reminder</Text>
 
-          <Text style={s.inputLabel}>Event name</Text>
-          <TextInput
-            style={s.input}
-            placeholder="e.g. Project deadline"
-            placeholderTextColor={TXT2}
-            value={title}
-            onChangeText={setTitle}
-          />
+        <Text style={s.inputLabel}>Event name</Text>
+        <TextInput
+          style={s.input}
+          placeholder="e.g. Project deadline"
+          placeholderTextColor={TXT2}
+          value={title}
+          onChangeText={setTitle}
+        />
 
-          <Text style={s.inputLabel}>Date (YYYY-MM-DD)</Text>
-          <TextInput
-            style={s.input}
-            placeholder="2026-04-10"
-            placeholderTextColor={TXT2}
-            value={date}
-            onChangeText={setDate}
-            keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'default'}
-            maxLength={10}
-          />
-
-          <View style={s.modalBtns}>
-            <Pressable style={s.modalCancel} onPress={onClose}>
-              <Text style={s.modalCancelTxt}>Cancel</Text>
-            </Pressable>
-            <Pressable style={s.modalAdd} onPress={handleAdd}>
-              <Text style={s.modalAddTxt}>Add</Text>
-            </Pressable>
-          </View>
+        <Text style={s.inputLabel}>Date</Text>
+        <Pressable
+          style={[s.input, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}
+          onPress={() => setShowCalendar(true)}
+        >
+          <Text style={{ color: date ? TXT : TXT2 }}>
+            {date || 'Pick a date'}
+          </Text>
+          <Text style={{ color: TXT2, fontSize: 18 }}>📅</Text>
         </Pressable>
-      </Pressable>
-    </Modal>
+        <CalendarPopup
+          visible={showCalendar}
+          onSelect={(d) => { setDate(d); setShowCalendar(false) }}
+          onClose={() => setShowCalendar(false)}
+          initialDate={date}
+        />
+
+        <View style={s.modalBtns}>
+          <Pressable style={s.modalCancel} onPress={onClose}>
+            <Text style={s.modalCancelTxt}>Cancel</Text>
+          </Pressable>
+          <Pressable style={s.modalAdd} onPress={handleAdd}>
+            <Text style={s.modalAddTxt}>Add</Text>
+          </Pressable>
+        </View>
+      </View>
+    </View>
   )
 }
 
@@ -144,14 +152,11 @@ export default function RemindersPage({
     <View style={s.root}>
       {/* ---- top bar ---- */}
       <View style={s.topBar}>
-        <View style={s.topLeft}>
-          <ZenithLogo size={38} color="#fff" />
-          <View style={s.avatar}>
-            <Text style={s.avatarLetter}>
-              {userName.charAt(0).toUpperCase()}
-            </Text>
-          </View>
+        <AnimatedAvatar letter={userName.charAt(0).toUpperCase()} />
+        <View style={s.brandCenter}>
+          <Text style={s.brandTitle}>Zenith</Text>
         </View>
+        <View style={{ width: 40 }} />
       </View>
 
       <ScrollView
@@ -212,7 +217,7 @@ export default function RemindersPage({
 /* ================================================================ */
 
 const s = StyleSheet.create({
-  root: { width: SCREEN_W, flex: 1, backgroundColor: BG },
+  root: { flex: 1, backgroundColor: BG },
 
   topBar: {
     flexDirection: 'row',
@@ -222,7 +227,23 @@ const s = StyleSheet.create({
     paddingTop: 58,
     paddingBottom: 14,
   },
-  topLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  brandCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 58,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    pointerEvents: 'none',
+  },
+  brandTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: TXT,
+    fontFamily: 'Georgia, serif',
+    letterSpacing: 2,
+  },
   avatar: {
     width: 40,
     height: 40,
@@ -293,9 +314,21 @@ const s = StyleSheet.create({
 
   /* modal */
   modalBg: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 100,
     justifyContent: 'flex-end',
+  },
+  modalBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.35)',
   },
   modalCard: {
     backgroundColor: BG,
@@ -303,7 +336,10 @@ const s = StyleSheet.create({
     borderTopRightRadius: 28,
     padding: 28,
     paddingBottom: 40,
+    zIndex: 101,
   },
+  modalHandle: { alignItems: 'center', marginBottom: 12 },
+  modalHandleBar: { width: 40, height: 5, borderRadius: 3, backgroundColor: 'rgba(43,45,31,0.25)' },
   modalTitle: { fontSize: 20, fontWeight: '700', color: TXT, marginBottom: 18 },
   inputLabel: { fontSize: 13, color: TXT2, marginBottom: 4, marginTop: 10 },
   input: {

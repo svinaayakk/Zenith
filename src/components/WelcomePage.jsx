@@ -133,11 +133,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     justifyContent: 'flex-end',
     alignItems: 'center',
+    minHeight: '100%',
   },
   particleArea: {
     position: 'absolute',
     top: 40,
-    alignSelf: 'center',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
   },
   content: {
     width: '100%',
