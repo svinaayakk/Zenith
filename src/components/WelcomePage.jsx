@@ -130,7 +130,7 @@ export default function WelcomePage({ onContinue }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: '#1E1E2E',
     justifyContent: 'flex-end',
     alignItems: 'center',
     minHeight: '100%',
@@ -150,24 +150,24 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 42,
-    fontWeight: '700',
+    fontWeight: '800',
     color: '#fff',
     marginBottom: 8,
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 15,
-    color: 'rgba(255,255,255,0.5)',
+    color: 'rgba(255,255,255,0.45)',
     marginBottom: 40,
   },
   input: {
     width: '100%',
     paddingVertical: 16,
     paddingHorizontal: 20,
-    borderRadius: 14,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)',
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderColor: 'rgba(255,255,255,0.12)',
+    backgroundColor: 'rgba(255,255,255,0.06)',
     color: '#fff',
     fontSize: 16,
     marginBottom: 14,
@@ -175,17 +175,17 @@ const styles = StyleSheet.create({
   btn: {
     width: '100%',
     paddingVertical: 16,
-    borderRadius: 14,
-    backgroundColor: '#fff',
+    borderRadius: 16,
+    backgroundColor: '#8B5CF6',
     alignItems: 'center',
   },
   btnDisabled: {
     opacity: 0.35,
   },
   btnText: {
-    color: '#000',
+    color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   footer: {
     marginTop: 24,

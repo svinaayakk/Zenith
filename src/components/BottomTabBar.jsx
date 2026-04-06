@@ -1,13 +1,13 @@
 import { useRef, useEffect } from 'react'
 import { View, Text, Pressable, Animated, StyleSheet } from 'react-native'
 
-const TXT = '#2b2d1f'
-const TXT2 = 'rgba(43,45,31,0.45)'
-const TAB_BG = 'rgba(190,194,172,0.72)'
-const ACTIVE_BG = TXT
+const TXT = '#1E1E2E'
+const TXT2 = '#9CA3AF'
+const TAB_BG = '#FFFFFF'
+const ACTIVE_BG = '#1E1E2E'
 const ACTIVE_TXT = '#fff'
-const INACTIVE_TXT = TXT2
-const ACCENT = '#c8e64a'
+const INACTIVE_TXT = '#9CA3AF'
+const ACCENT = '#8B5CF6'
 
 /* ── minimal View-based tab indicators ── */
 function FocusDot({ active }) {
@@ -131,8 +131,13 @@ const s = StyleSheet.create({
     borderRadius: 28,
     padding: 5,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.22)',
+    borderColor: '#E5E7EB',
     position: 'relative',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 4,
   },
   indicator: {
     position: 'absolute',
@@ -174,6 +179,6 @@ const s = StyleSheet.create({
   badgeText: {
     fontSize: 11,
     fontWeight: '700',
-    color: TXT,
+    color: '#fff',
   },
 })
