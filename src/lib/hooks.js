@@ -7,14 +7,13 @@ const IS_SUPABASE_CONFIGURED =
   import.meta.env.VITE_SUPABASE_ANON_KEY.startsWith('eyJ') &&
   supabase != null
 
-/* ── Auth: magic-link / anonymous sign-in by display name ── */
+/* ── Auth: Google OAuth + Email/Password sign-in ── */
 export function useAuth() {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!IS_SUPABASE_CONFIGURED) {
-      /* check for a locally-persisted session */
       try {
         const saved = localStorage.getItem('zenith_local_session')
         if (saved) setSession(JSON.parse(saved))
@@ -32,7 +31,16 @@ export function useAuth() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const signIn = useCallback(async (displayName) => {
+  const signInWithGoogle = useCallback(async () => {
+    if (!IS_SUPABASE_CONFIGURED) return
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    })
+    if (error) throw error
+  }, [])
+
+  const signUpWithEmail = useCallback(async (email, password, displayName) => {
     if (!IS_SUPABASE_CONFIGURED) {
       const localSession = {
         user: {
@@ -44,13 +52,20 @@ export function useAuth() {
       setSession(localSession)
       return localSession
     }
-    const id = crypto.randomUUID()
-    const email = `${id}@zenith.local`
-    const password = id
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { display_name: displayName } },
+    })
+    if (error) throw error
+    return data
+  }, [])
+
+  const signInWithEmail = useCallback(async (email, password) => {
+    if (!IS_SUPABASE_CONFIGURED) return
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     })
     if (error) throw error
     return data
@@ -65,9 +80,14 @@ export function useAuth() {
     await supabase.auth.signOut()
   }, [])
 
-  const displayName = session?.user?.user_metadata?.display_name ?? null
+  const user = session?.user
+  const displayName =
+    user?.user_metadata?.display_name ??
+    user?.user_metadata?.full_name ??
+    user?.email ??
+    null
 
-  return { session, loading, displayName, signIn, signOut }
+  return { session, loading, displayName, signInWithGoogle, signUpWithEmail, signInWithEmail, signOut }
 }
 
 /* ── Generic table sync ── */

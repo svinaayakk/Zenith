@@ -7,7 +7,7 @@ import RemindersPage from './components/RemindersPage'
 import { useAuth, useGoals, useHabits, useReminders, useCompletionLog } from './lib/hooks'
 
 function App() {
-  const { session, loading: authLoading, displayName, signIn, signOut } = useAuth()
+  const { session, loading: authLoading, displayName, signInWithGoogle, signUpWithEmail, signInWithEmail, signOut } = useAuth()
   const userId = session?.user?.id ?? null
 
   const { rows: goals, upsertRow: upsertGoal, deleteRow: deleteGoal } = useGoals(userId)
@@ -62,12 +62,20 @@ function App() {
     return diff <= 7
   }).length
 
-  const handleSignIn = async (name) => {
+  const handleGoogleSignIn = async () => {
     try {
-      await signIn(name)
+      await signInWithGoogle()
     } catch (e) {
-      console.error('Sign-in failed:', e)
+      console.error('Google sign-in failed:', e)
     }
+  }
+
+  const handleEmailSignUp = async (email, password, name) => {
+    await signUpWithEmail(email, password, name)
+  }
+
+  const handleEmailSignIn = async (email, password) => {
+    await signInWithEmail(email, password)
   }
 
   if (authLoading) {
@@ -81,7 +89,11 @@ function App() {
   return (
     <View style={appStyles.container}>
       {!session ? (
-        <WelcomePage onContinue={handleSignIn} />
+        <WelcomePage
+          onGoogleSignIn={handleGoogleSignIn}
+          onEmailSignUp={handleEmailSignUp}
+          onEmailSignIn={handleEmailSignIn}
+        />
       ) : (
         <>
           {activeTab === 'focus' && (
