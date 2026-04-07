@@ -30,9 +30,14 @@
         overflow: hidden;
         box-shadow: 0 25px 60px rgba(0,0,0,0.5);
       }
-      @media (max-width: 500px) {
+      #root > div {
+        height: 100%;
+      }
+
+      /* When installed as PWA (standalone) or on mobile — go fullscreen */
+      @media (display-mode: standalone) {
         html, body {
-          background: none;
+          background: #F5F5F7;
           display: block;
         }
         #root {
@@ -43,8 +48,18 @@
           box-shadow: none;
         }
       }
-      #root > div {
-        height: 100%;
+      @media (max-width: 500px) {
+        html, body {
+          background: #F5F5F7;
+          display: block;
+        }
+        #root {
+          width: 100%;
+          height: 100%;
+          max-height: none;
+          border-radius: 0;
+          box-shadow: none;
+        }
       }
     </style>
   </head>

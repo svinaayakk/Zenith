@@ -46,6 +46,16 @@ body {
   box-sizing: border-box;
 }
 
+/* Safe area padding for notch/dynamic island in PWA standalone mode */
+@media (display-mode: standalone) {
+  #root {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
 h1,
 h2 {
   font-family: var(--heading);
