@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { View, Text, Pressable, StyleSheet } from 'react-native'
 
-const TXT = '#2b2d1f'
-const TXT2 = 'rgba(43,45,31,0.4)'
-const ACCENT = '#c8e64a'
+const TXT = '#1E1E2E'
+const TXT2 = '#9CA3AF'
+const ACCENT = '#8B5CF6'
 
 const MONTHS = [
   'January','February','March','April','May','June',
@@ -119,11 +119,15 @@ const s = StyleSheet.create({
   card: {
     width: 330,
     backgroundColor: '#fff',
-    borderRadius: 20,
+    borderRadius: 24,
     paddingHorizontal: 16,
     paddingTop: 20,
     paddingBottom: 12,
     zIndex: 201,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
   },
   nav: {
     flexDirection: 'row',
@@ -170,10 +174,10 @@ const s = StyleSheet.create({
     borderRadius: 21,
   },
   todayCell: {
-    backgroundColor: '#f0f0ec',
+    backgroundColor: '#F3F4F6',
   },
   selCell: {
-    backgroundColor: TXT,
+    backgroundColor: '#8B5CF6',
   },
   dayTxt: {
     fontSize: 14,

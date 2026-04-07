@@ -10,12 +10,12 @@ import {
   StyleSheet,
 } from 'react-native'
 
-const TXT = '#2b2d1f'
-const TXT2 = 'rgba(43,45,31,0.45)'
-const BG = '#a8ab8e'
-const CARD_BG = 'rgba(190,194,172,0.85)'
-const WHITE20 = 'rgba(255,255,255,0.22)'
-const ACCENT = '#c8e64a'
+const TXT = '#1E1E2E'
+const TXT2 = '#9CA3AF'
+const BG = '#F5F5F7'
+const CARD_BG = '#FFFFFF'
+const WHITE20 = 'rgba(139,92,246,0.08)'
+const ACCENT = '#8B5CF6'
 
 const FREQUENCIES = ['daily', 'weekly', 'monthly']
 
@@ -229,7 +229,7 @@ const s = StyleSheet.create({
     flex: 1,
   },
   sheet: {
-    backgroundColor: BG,
+    backgroundColor: '#fff',
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     paddingBottom: 40,
@@ -247,7 +247,7 @@ const s = StyleSheet.create({
     width: 40,
     height: 5,
     borderRadius: 3,
-    backgroundColor: 'rgba(43,45,31,0.25)',
+    backgroundColor: '#D1D5DB',
   },
   content: {
     paddingHorizontal: 24,
@@ -256,7 +256,7 @@ const s = StyleSheet.create({
   },
   heading: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: '800',
     color: TXT,
     marginBottom: 4,
   },
@@ -265,31 +265,31 @@ const s = StyleSheet.create({
   typeCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: CARD_BG,
+    backgroundColor: '#F9FAFB',
     borderRadius: 18,
     padding: 18,
     borderWidth: 1,
-    borderColor: WHITE20,
+    borderColor: '#E5E7EB',
     gap: 14,
   },
   typeIconWrap: {
     width: 36,
     height: 36,
     borderRadius: 12,
-    backgroundColor: WHITE20,
+    backgroundColor: ACCENT,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sprintBolt1: { width: 10, height: 3, backgroundColor: TXT, borderRadius: 1.5, transform: [{ rotate: '-30deg' }], marginBottom: 1 },
-  sprintBolt2: { width: 10, height: 3, backgroundColor: TXT, borderRadius: 1.5, transform: [{ rotate: '30deg' }], marginTop: -1 },
-  loopRing: { width: 16, height: 16, borderRadius: 8, borderWidth: 2.5, borderColor: TXT },
-  loopDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: TXT, position: 'absolute', top: 6, right: 6 },
+  sprintBolt1: { width: 10, height: 3, backgroundColor: '#fff', borderRadius: 1.5, transform: [{ rotate: '-30deg' }], marginBottom: 1 },
+  sprintBolt2: { width: 10, height: 3, backgroundColor: '#fff', borderRadius: 1.5, transform: [{ rotate: '30deg' }], marginTop: -1 },
+  loopRing: { width: 16, height: 16, borderRadius: 8, borderWidth: 2.5, borderColor: '#fff' },
+  loopDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: '#fff', position: 'absolute', top: 6, right: 6 },
   typeInfo: {
     flex: 1,
   },
   typeTitle: {
     fontSize: 17,
-    fontWeight: '700',
+    fontWeight: '800',
     color: TXT,
   },
   typeDesc: {
@@ -313,12 +313,12 @@ const s = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: 'rgba(43,45,31,0.14)',
+    borderColor: '#E5E7EB',
     borderRadius: 14,
     padding: 14,
     fontSize: 15,
     color: TXT,
-    backgroundColor: 'rgba(255,255,255,0.18)',
+    backgroundColor: '#F9FAFB',
   },
   fieldLabel: {
     fontSize: 14,
@@ -334,14 +334,14 @@ const s = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: 14,
-    backgroundColor: WHITE20,
+    backgroundColor: '#F3F4F6',
     alignItems: 'center',
     borderWidth: 1.5,
     borderColor: 'transparent',
   },
   freqChipActive: {
-    backgroundColor: TXT,
-    borderColor: TXT,
+    backgroundColor: ACCENT,
+    borderColor: ACCENT,
   },
   freqChipTxt: {
     fontSize: 14,
@@ -353,7 +353,7 @@ const s = StyleSheet.create({
     color: '#fff',
   },
   submitBtn: {
-    backgroundColor: TXT,
+    backgroundColor: ACCENT,
     borderRadius: 16,
     paddingVertical: 16,
     alignItems: 'center',

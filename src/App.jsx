@@ -72,8 +72,8 @@ function App() {
 
   if (authLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#a8ab8e' }}>
-        <ActivityIndicator size="large" color="#c8e64a" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F5F7' }}>
+        <ActivityIndicator size="large" color="#8B5CF6" />
       </View>
     )
   }

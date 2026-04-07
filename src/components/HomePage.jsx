@@ -11,7 +11,6 @@ import {
 import GoalCard from './GoalCard'
 import HabitCard from './HabitCard'
 import BottomTabBar from './BottomTabBar'
-import AnimatedAvatar from './AnimatedAvatar'
 import AddTaskModal from './AddTaskModal'
 
 const SCREEN_W = 390
@@ -262,11 +261,6 @@ export default function HomePage({
           <View style={s.twoCol}>
             <Text style={s.dimLabelLight}>Done</Text>
             <Text style={s.dimLabelLight}>Remaining</Text>
-          </View>
-          <SliderBar ratio={ratio} />
-        </Animated.View>
-            <Text style={s.dimLabel}>Done</Text>
-            <Text style={s.dimLabel}>Remaining</Text>
           </View>
           <SliderBar ratio={ratio} />
         </Animated.View>

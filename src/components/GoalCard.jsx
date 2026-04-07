@@ -1,12 +1,12 @@
 import { useRef, useEffect } from 'react'
 import { View, Text, Pressable, Animated, StyleSheet } from 'react-native'
 
-const TXT = '#2b2d1f'
-const TXT2 = 'rgba(43,45,31,0.45)'
-const CARD_BG = 'rgba(190,194,172,0.52)'
-const CARD_BORDER = 'rgba(255,255,255,0.22)'
-const WHITE20 = 'rgba(255,255,255,0.22)'
-const ACCENT = '#c8e64a'
+const TXT = '#1E1E2E'
+const TXT2 = '#9CA3AF'
+const CARD_BG = '#FFFFFF'
+const CARD_BORDER = '#E5E7EB'
+const WHITE20 = 'rgba(139,92,246,0.08)'
+const ACCENT = '#8B5CF6'
 
 /* ── animated row with bounce on toggle ── */
 function GoalRow({ goal, onToggle }) {
@@ -91,6 +91,11 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: CARD_BORDER,
     padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
   head: {
     flexDirection: 'row',
@@ -108,7 +113,7 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   badgeChar: { fontSize: 18, color: TXT2 },
-  hero: { fontSize: 52, fontWeight: '700', color: TXT, marginBottom: 4 },
+  hero: { fontSize: 52, fontWeight: '800', color: TXT, marginBottom: 4 },
   heroSup: { fontSize: 18, fontWeight: '600', color: TXT2 },
   twoCol: {
     flexDirection: 'row',
@@ -123,7 +128,7 @@ const s = StyleSheet.create({
     flex: 1,
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(43,45,31,0.14)',
+    backgroundColor: '#E5E7EB',
   },
   miniBarDone: { backgroundColor: ACCENT },
 
@@ -131,15 +136,15 @@ const s = StyleSheet.create({
   form: { marginBottom: 14, gap: 10 },
   input: {
     borderWidth: 1,
-    borderColor: 'rgba(43,45,31,0.14)',
+    borderColor: '#E5E7EB',
     borderRadius: 14,
     padding: 14,
     fontSize: 15,
     color: TXT,
-    backgroundColor: 'rgba(255,255,255,0.18)',
+    backgroundColor: '#F9FAFB',
   },
   addBtn: {
-    backgroundColor: TXT,
+    backgroundColor: '#8B5CF6',
     borderRadius: 14,
     padding: 14,
     alignItems: 'center',
@@ -152,19 +157,19 @@ const s = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 11,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(43,45,31,0.07)',
+    borderTopColor: '#F3F4F6',
   },
   check: {
     width: 22,
     height: 22,
-    borderRadius: 7,
+    borderRadius: 11,
     borderWidth: 2,
-    borderColor: 'rgba(43,45,31,0.25)',
+    borderColor: '#D1D5DB',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
-  checked: { backgroundColor: TXT, borderColor: TXT },
+  checked: { backgroundColor: '#8B5CF6', borderColor: '#8B5CF6' },
   tickMark: { flexDirection: 'row', alignItems: 'flex-end', width: 12, height: 10 },
   tickShort: { width: 2, height: 5, backgroundColor: '#fff', borderRadius: 1, transform: [{ rotate: '-40deg' }] },
   tickLong: { width: 2, height: 10, backgroundColor: '#fff', borderRadius: 1, transform: [{ rotate: '25deg' }], marginLeft: 1 },

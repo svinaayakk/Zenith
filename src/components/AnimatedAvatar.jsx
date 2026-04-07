@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { View, Text, Animated, Easing, StyleSheet, Pressable } from 'react-native'
 
-const TXT = '#2b2d1f'
+const TXT = '#1E1E2E'
 const SIZE = 32
 const INNER_COUNT = 8
 const INNER_RADIUS = 19
@@ -151,9 +151,11 @@ const s = StyleSheet.create({
     width: SIZE,
     height: SIZE,
     borderRadius: SIZE / 2,
-    backgroundColor: 'rgba(255,255,255,0.35)',
+    backgroundColor: '#F3F4F6',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   letter: {
     fontSize: 14,
