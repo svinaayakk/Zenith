@@ -5,23 +5,21 @@ import {
   ScrollView,
   Pressable,
   TextInput,
-  Modal,
   Dimensions,
   StyleSheet,
-  Platform,
 } from 'react-native'
-import ZenithLogo from './ZenithLogo'
 import BottomTabBar from './BottomTabBar'
+import CalendarPopup from './CalendarPopup'
 
-const { width: SCREEN_W } = Dimensions.get('window')
+const SCREEN_W = 390
 
-const BG = '#a8ab8e'
-const CARD_BG = 'rgba(190,194,172,0.52)'
-const CARD_BORDER = 'rgba(255,255,255,0.22)'
-const TXT = '#2b2d1f'
-const TXT2 = 'rgba(43,45,31,0.45)'
-const ACCENT = '#c8e64a'
-const WHITE20 = 'rgba(255,255,255,0.22)'
+const BG = '#F5F5F7'
+const CARD_BG = '#FFFFFF'
+const CARD_BORDER = '#E5E7EB'
+const TXT = '#1E1E2E'
+const TXT2 = '#9CA3AF'
+const ACCENT = '#8B5CF6'
+const WHITE20 = 'rgba(139,92,246,0.08)'
 
 /* helper: days remaining from today */
 function daysUntil(dateStr) {
@@ -44,6 +42,7 @@ function urgencyLabel(days) {
 function AddReminderModal({ visible, onClose, onAdd }) {
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
+  const [showCalendar, setShowCalendar] = useState(false)
 
   const handleAdd = () => {
     if (!title.trim() || !date.trim()) return
@@ -55,43 +54,51 @@ function AddReminderModal({ visible, onClose, onAdd }) {
     onClose()
   }
 
+  if (!visible) return null
+
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <Pressable style={s.modalBg} onPress={onClose}>
-        <Pressable style={s.modalCard} onPress={(e) => e.stopPropagation()}>
-          <Text style={s.modalTitle}>New Reminder</Text>
+    <View style={s.modalBg}>
+      <Pressable style={s.modalBackdrop} onPress={onClose} />
+      <View style={s.modalCard}>
+        <View style={s.modalHandle}><View style={s.modalHandleBar} /></View>
+        <Text style={s.modalTitle}>New Reminder</Text>
 
-          <Text style={s.inputLabel}>Event name</Text>
-          <TextInput
-            style={s.input}
-            placeholder="e.g. Project deadline"
-            placeholderTextColor={TXT2}
-            value={title}
-            onChangeText={setTitle}
-          />
+        <Text style={s.inputLabel}>Event name</Text>
+        <TextInput
+          style={s.input}
+          placeholder="e.g. Project deadline"
+          placeholderTextColor={TXT2}
+          value={title}
+          onChangeText={setTitle}
+        />
 
-          <Text style={s.inputLabel}>Date (YYYY-MM-DD)</Text>
-          <TextInput
-            style={s.input}
-            placeholder="2026-04-10"
-            placeholderTextColor={TXT2}
-            value={date}
-            onChangeText={setDate}
-            keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'default'}
-            maxLength={10}
-          />
-
-          <View style={s.modalBtns}>
-            <Pressable style={s.modalCancel} onPress={onClose}>
-              <Text style={s.modalCancelTxt}>Cancel</Text>
-            </Pressable>
-            <Pressable style={s.modalAdd} onPress={handleAdd}>
-              <Text style={s.modalAddTxt}>Add</Text>
-            </Pressable>
-          </View>
+        <Text style={s.inputLabel}>Date</Text>
+        <Pressable
+          style={[s.input, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}
+          onPress={() => setShowCalendar(true)}
+        >
+          <Text style={{ color: date ? TXT : TXT2 }}>
+            {date || 'Pick a date'}
+          </Text>
+          <Text style={{ color: TXT2, fontSize: 18 }}>📅</Text>
         </Pressable>
-      </Pressable>
-    </Modal>
+        <CalendarPopup
+          visible={showCalendar}
+          onSelect={(d) => { setDate(d); setShowCalendar(false) }}
+          onClose={() => setShowCalendar(false)}
+          initialDate={date}
+        />
+
+        <View style={s.modalBtns}>
+          <Pressable style={s.modalCancel} onPress={onClose}>
+            <Text style={s.modalCancelTxt}>Cancel</Text>
+          </Pressable>
+          <Pressable style={s.modalAdd} onPress={handleAdd}>
+            <Text style={s.modalAddTxt}>Add</Text>
+          </Pressable>
+        </View>
+      </View>
+    </View>
   )
 }
 
@@ -144,14 +151,14 @@ export default function RemindersPage({
     <View style={s.root}>
       {/* ---- top bar ---- */}
       <View style={s.topBar}>
-        <View style={s.topLeft}>
-          <ZenithLogo size={38} color="#fff" />
-          <View style={s.avatar}>
-            <Text style={s.avatarLetter}>
-              {userName.charAt(0).toUpperCase()}
-            </Text>
-          </View>
+        <View style={s.backBtn}>
+          <View style={s.backArrowLine} />
+          <View style={s.backArrowHead} />
         </View>
+        <View style={s.brandCenter}>
+          <Text style={s.brandTitle}>Reminders</Text>
+        </View>
+        <View style={{ width: 40 }} />
       </View>
 
       <ScrollView
@@ -212,7 +219,7 @@ export default function RemindersPage({
 /* ================================================================ */
 
 const s = StyleSheet.create({
-  root: { width: SCREEN_W, flex: 1, backgroundColor: BG },
+  root: { flex: 1, backgroundColor: BG },
 
   topBar: {
     flexDirection: 'row',
@@ -222,14 +229,43 @@ const s = StyleSheet.create({
     paddingTop: 58,
     paddingBottom: 14,
   },
-  topLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+  },
+  backArrowLine: { position: 'absolute', width: 14, height: 2, borderRadius: 1, backgroundColor: TXT },
+  backArrowHead: { position: 'absolute', left: 10, width: 8, height: 8, borderBottomWidth: 2, borderLeftWidth: 2, borderColor: TXT, transform: [{ rotate: '45deg' }] },
+  brandCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 58,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    pointerEvents: 'none',
+  },
+  brandTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: TXT,
+    letterSpacing: 1.5,
+  },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.35)',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
   },
   avatarLetter: { fontSize: 18, fontWeight: '700', color: TXT },
 
@@ -250,6 +286,11 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: CARD_BORDER,
     padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    elevation: 1,
   },
   reminderLeft: {
     flexDirection: 'row',
@@ -284,6 +325,11 @@ const s = StyleSheet.create({
     borderRadius: 24,
     borderWidth: 1,
     borderColor: CARD_BORDER,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
   emptyBell: { width: 40, height: 42, alignItems: 'center', marginBottom: 12 },
   emptyBellDome: { width: 26, height: 24, borderTopLeftRadius: 13, borderTopRightRadius: 13, backgroundColor: TXT2 },
@@ -293,21 +339,36 @@ const s = StyleSheet.create({
 
   /* modal */
   modalBg: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 100,
     justifyContent: 'flex-end',
   },
+  modalBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+  },
   modalCard: {
-    backgroundColor: BG,
+    backgroundColor: '#fff',
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     padding: 28,
     paddingBottom: 40,
+    zIndex: 101,
   },
+  modalHandle: { alignItems: 'center', marginBottom: 12 },
+  modalHandleBar: { width: 40, height: 5, borderRadius: 3, backgroundColor: '#D1D5DB' },
   modalTitle: { fontSize: 20, fontWeight: '700', color: TXT, marginBottom: 18 },
   inputLabel: { fontSize: 13, color: TXT2, marginBottom: 4, marginTop: 10 },
   input: {
-    backgroundColor: CARD_BG,
+    backgroundColor: '#F9FAFB',
     borderRadius: 14,
     borderWidth: 1,
     borderColor: CARD_BORDER,
@@ -320,7 +381,7 @@ const s = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: 16,
-    backgroundColor: WHITE20,
+    backgroundColor: '#F3F4F6',
     alignItems: 'center',
   },
   modalCancelTxt: { fontSize: 15, fontWeight: '600', color: TXT },
@@ -328,7 +389,7 @@ const s = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: 16,
-    backgroundColor: TXT,
+    backgroundColor: '#8B5CF6',
     alignItems: 'center',
   },
   modalAddTxt: { fontSize: 15, fontWeight: '600', color: '#fff' },
@@ -341,13 +402,13 @@ const s = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: TXT,
+    backgroundColor: '#8B5CF6',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
+    shadowColor: '#8B5CF6',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
     elevation: 6,
     zIndex: 10,
   },

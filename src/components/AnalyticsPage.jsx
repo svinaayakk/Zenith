@@ -1,26 +1,25 @@
 import { useMemo } from 'react'
 import { View, Text, ScrollView, Pressable, Dimensions, StyleSheet } from 'react-native'
-import ZenithLogo from './ZenithLogo'
 import BottomTabBar from './BottomTabBar'
 
-const { width: SCREEN_W } = Dimensions.get('window')
+const SCREEN_W = 390
 
-const BG = '#a8ab8e'
-const CARD_BG = 'rgba(190,194,172,0.52)'
-const CARD_BORDER = 'rgba(255,255,255,0.22)'
-const TXT = '#2b2d1f'
-const TXT2 = 'rgba(43,45,31,0.45)'
-const ACCENT = '#c8e64a'
-const WHITE20 = 'rgba(255,255,255,0.22)'
+const BG = '#F5F5F7'
+const CARD_BG = '#FFFFFF'
+const CARD_BORDER = '#E5E7EB'
+const TXT = '#1E1E2E'
+const TXT2 = '#9CA3AF'
+const ACCENT = '#8B5CF6'
+const WHITE20 = 'rgba(139,92,246,0.08)'
 
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 /* intensity → colour */
 function heatColor(level) {
-  if (level === 0) return WHITE20
-  if (level === 1) return 'rgba(200,230,74,0.30)'
-  if (level === 2) return 'rgba(200,230,74,0.55)'
-  if (level === 3) return 'rgba(200,230,74,0.80)'
+  if (level === 0) return '#F3F4F6'
+  if (level === 1) return 'rgba(139,92,246,0.15)'
+  if (level === 2) return 'rgba(139,92,246,0.35)'
+  if (level === 3) return 'rgba(139,92,246,0.60)'
   return ACCENT
 }
 
@@ -239,13 +238,12 @@ export default function AnalyticsPage({
     <View style={s.root}>
       {/* ---- top bar ---- */}
       <View style={s.topBar}>
-        <View style={s.topLeft}>
-          <ZenithLogo size={38} color="#fff" />
-          <View style={s.avatar}>
-            <Text style={s.avatarLetter}>
-              {userName.charAt(0).toUpperCase()}
-            </Text>
-          </View>
+        <View style={s.backBtn}>
+          <View style={s.backArrowLine} />
+          <View style={s.backArrowHead} />
+        </View>
+        <View style={s.brandCenter}>
+          <Text style={s.brandTitle}>Analytics</Text>
         </View>
         <Pressable style={s.bellCircle} onPress={() => onTabChange('reminders')}>
           <View style={s.bellShape}>
@@ -308,7 +306,7 @@ export default function AnalyticsPage({
 /* ================================================================ */
 
 const s = StyleSheet.create({
-  root: { width: SCREEN_W, flex: 1, backgroundColor: BG },
+  root: { flex: 1, backgroundColor: BG },
 
   topBar: {
     flexDirection: 'row',
@@ -318,23 +316,43 @@ const s = StyleSheet.create({
     paddingTop: 58,
     paddingBottom: 14,
   },
-  topLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  avatar: {
+  backBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.35)',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
   },
-  avatarLetter: { fontSize: 18, fontWeight: '700', color: TXT },
+  backArrowLine: { position: 'absolute', width: 14, height: 2, borderRadius: 1, backgroundColor: TXT },
+  backArrowHead: { position: 'absolute', left: 10, width: 8, height: 8, borderBottomWidth: 2, borderLeftWidth: 2, borderColor: TXT, transform: [{ rotate: '45deg' }] },
+  brandCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 58,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    pointerEvents: 'none',
+  },
+  brandTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: TXT,
+    letterSpacing: 1.5,
+  },
   bellCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(43,45,31,0.18)',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
   },
   bellShape: { width: 18, height: 18, alignItems: 'center' },
   bellDome: { width: 12, height: 11, borderTopLeftRadius: 6, borderTopRightRadius: 6, backgroundColor: TXT },
@@ -347,7 +365,7 @@ const s = StyleSheet.create({
     minWidth: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: '#e05a5a',
+    backgroundColor: '#EF4444',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 4,
@@ -363,6 +381,11 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: CARD_BORDER,
     padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
   cardHead: {
     flexDirection: 'row',
@@ -370,12 +393,12 @@ const s = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
-  cardLabel: { fontSize: 17, fontWeight: '600', color: TXT },
+  cardLabel: { fontSize: 17, fontWeight: '700', color: TXT },
 
   /* month heat map */
   monthTitle: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: '800',
     color: TXT,
     marginBottom: 12,
   },
@@ -445,12 +468,12 @@ const s = StyleSheet.create({
     alignItems: 'center',
   },
   summaryItem: { flex: 1, alignItems: 'center' },
-  summaryNum: { fontSize: 28, fontWeight: '700', color: TXT },
+  summaryNum: { fontSize: 28, fontWeight: '800', color: TXT },
   summaryLabel: { fontSize: 12, color: TXT2, marginTop: 2 },
   summaryDivider: {
     width: 1,
     height: 36,
-    backgroundColor: 'rgba(43,45,31,0.15)',
+    backgroundColor: '#E5E7EB',
   },
 
   /* consistency score */
@@ -469,7 +492,7 @@ const s = StyleSheet.create({
   },
   scoreTitle: {
     fontSize: 17,
-    fontWeight: '700',
+    fontWeight: '800',
     color: TXT,
     marginBottom: 2,
   },

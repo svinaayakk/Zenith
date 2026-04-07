@@ -1,15 +1,10 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
-import { Animated, PanResponder, Dimensions, StyleSheet, ActivityIndicator, View } from 'react-native'
+import { useState, useCallback, useEffect } from 'react'
+import { StyleSheet, ActivityIndicator, View } from 'react-native'
 import WelcomePage from './components/WelcomePage'
 import HomePage from './components/HomePage'
 import AnalyticsPage from './components/AnalyticsPage'
 import RemindersPage from './components/RemindersPage'
 import { useAuth, useGoals, useHabits, useReminders, useCompletionLog } from './lib/hooks'
-
-const { width: SCREEN_W } = Dimensions.get('window')
-const TABS = ['focus', 'analytics', 'reminders']
-const SWIPE_THRESHOLD = SCREEN_W * 0.25
-const VELOCITY_THRESHOLD = 0.4
 
 function App() {
   const { session, loading: authLoading, displayName, signIn, signOut } = useAuth()
@@ -32,78 +27,10 @@ function App() {
     const key = new Date().toISOString().slice(0, 10)
     upsertDay(key, done, total)
   }, [goals, habits, userId])
-  const translateX = useRef(new Animated.Value(0)).current
-  const tabIndex = useRef(0)
-  const mainOpacity = useRef(new Animated.Value(0)).current
-  const mainScale = useRef(new Animated.Value(0.96)).current
 
-  useEffect(() => {
-    if (session) {
-      Animated.parallel([
-        Animated.timing(mainOpacity, {
-          toValue: 1,
-          duration: 420,
-          useNativeDriver: true,
-        }),
-        Animated.spring(mainScale, {
-          toValue: 1,
-          tension: 50,
-          friction: 9,
-          useNativeDriver: true,
-        }),
-      ]).start()
-    } else {
-      mainOpacity.setValue(0)
-      mainScale.setValue(0.96)
-    }
-  }, [session])
-
-  const animateTo = useCallback(
-    (index) => {
-      tabIndex.current = index
-      setActiveTab(TABS[index])
-      Animated.spring(translateX, {
-        toValue: -index * SCREEN_W,
-        useNativeDriver: true,
-        tension: 68,
-        friction: 12,
-      }).start()
-    },
-    [translateX],
-  )
-
-  const handleTabChange = useCallback(
-    (key) => {
-      const idx = TABS.indexOf(key)
-      if (idx !== -1) animateTo(idx)
-    },
-    [animateTo],
-  )
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, { dx, dy }) =>
-        Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10,
-      onPanResponderMove: (_, { dx }) => {
-        const base = -tabIndex.current * SCREEN_W
-        const clamped = Math.max(
-          -(TABS.length - 1) * SCREEN_W,
-          Math.min(0, base + dx),
-        )
-        translateX.setValue(clamped)
-      },
-      onPanResponderRelease: (_, { dx, vx }) => {
-        const cur = tabIndex.current
-        if (dx < -SWIPE_THRESHOLD || vx < -VELOCITY_THRESHOLD) {
-          animateTo(Math.min(cur + 1, TABS.length - 1))
-        } else if (dx > SWIPE_THRESHOLD || vx > VELOCITY_THRESHOLD) {
-          animateTo(Math.max(cur - 1, 0))
-        } else {
-          animateTo(cur)
-        }
-      },
-    }),
-  ).current
+  const handleTabChange = useCallback((key) => {
+    setActiveTab(key)
+  }, [])
 
   const addGoal = ({ title, deadline }) => {
     upsertGoal({ id: crypto.randomUUID(), title, deadline, completed: false })
@@ -136,74 +63,75 @@ function App() {
   }).length
 
   const handleSignIn = async (name) => {
-    await signIn(name)
+    try {
+      await signIn(name)
+    } catch (e) {
+      console.error('Sign-in failed:', e)
+    }
   }
 
   if (authLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#a8ab8e' }}>
-        <ActivityIndicator size="large" color="#c8e64a" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F5F7' }}>
+        <ActivityIndicator size="large" color="#8B5CF6" />
       </View>
     )
   }
 
   return (
-    <>
+    <View style={appStyles.container}>
       {!session ? (
         <WelcomePage onContinue={handleSignIn} />
       ) : (
-        <Animated.View
-          style={[
-            appStyles.tray,
-            {
-              opacity: mainOpacity,
-              transform: [{ translateX }, { scale: mainScale }],
-            },
-          ]}
-          {...panResponder.panHandlers}
-        >
-          <HomePage
-            userName={displayName}
-            goals={goals}
-            habits={habits}
-            onToggleGoal={toggleGoal}
-            onToggleHabit={toggleHabit}
-            onAddGoal={addGoal}
-            onAddHabit={addHabit}
-            onBack={signOut}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-            bellCount={bellCount}
-          />
-          <AnalyticsPage
-            userName={displayName}
-            goals={goals}
-            habits={habits}
-            completionLog={completionLog}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-            bellCount={bellCount}
-          />
-          <RemindersPage
-            userName={displayName}
-            reminders={reminders}
-            onAddReminder={addReminder}
-            onDeleteReminder={handleDeleteReminder}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-            bellCount={bellCount}
-          />
-        </Animated.View>
+        <>
+          {activeTab === 'focus' && (
+            <HomePage
+              userName={displayName}
+              goals={goals}
+              habits={habits}
+              onToggleGoal={toggleGoal}
+              onToggleHabit={toggleHabit}
+              onAddGoal={addGoal}
+              onAddHabit={addHabit}
+              onBack={signOut}
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+              bellCount={bellCount}
+            />
+          )}
+          {activeTab === 'analytics' && (
+            <AnalyticsPage
+              userName={displayName}
+              goals={goals}
+              habits={habits}
+              completionLog={completionLog}
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+              bellCount={bellCount}
+            />
+          )}
+          {activeTab === 'reminders' && (
+            <RemindersPage
+              userName={displayName}
+              reminders={reminders}
+              onAddReminder={addReminder}
+              onDeleteReminder={handleDeleteReminder}
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+              bellCount={bellCount}
+            />
+          )}
+        </>
       )}
-    </>
+    </View>
   )
 }
 
 const appStyles = StyleSheet.create({
-  tray: {
-    flexDirection: 'row',
-    width: SCREEN_W * TABS.length,
+  container: {
     flex: 1,
+    width: '100%',
+    height: '100%',
   },
 })
 
